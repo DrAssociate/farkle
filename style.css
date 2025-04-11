@@ -1,0 +1,64 @@
+.die-img {
+  display: none;
+}
+
+.die-numbers {
+  display: flex;
+  flex-direction: row;
+  height: 100px;
+}
+
+#die1,
+#die2,
+#die3,
+#die4,
+#die5,
+#die6 {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0.5em;
+  background-size: cover;
+  display: none;
+}
+
+#die1:hover,
+#die2:hover,
+#die3:hover,
+#die4:hover,
+#die5:hover,
+#die6:hover {
+  cursor: pointer;
+  transform: translateY(-5px);
+}
+
+#die1.chosen,
+#die2.chosen,
+#die3.chosen,
+#die4.chosen,
+#die5.chosen,
+#die6.chosen {
+  transform: translateY(-5px);
+  box-shadow: 0px 0px 10px;
+}
+
+#die1.once-chose,
+#die2.once-chose,
+#die3.once-chose,
+#die4.once-chose,
+#die5.once-chose,
+#die6.once-chose {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0.5em;
+  background-size: cover;
+}
+
+#user-holding-container {
+  display: flex;
+}
