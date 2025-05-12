@@ -140,15 +140,13 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // THROW AGAIN BTN FUNCTION
+  // // THROW AGAIN BTN FUNCTION
   throwAgain.addEventListener('click', () => {
     console.log(`You pressed the throw again button`);
 
-    // RESETTING CURRENTROLLSCORE AND CLASSLIST TO BLOCK USER
-    // FROM WRONGFUL REROLL
     throwAgain.classList.add('locked');
 
-    // TARGETTING PLAYABLE DIE THAT HAVE BEEN SELECTED FOR SCORING
+    // Move chosen dice to holding container and lock them
     const chosenDice = dice.filter(
       (die) =>
         die.classList.contains('chosen') &&
@@ -164,17 +162,34 @@ window.addEventListener('DOMContentLoaded', () => {
       die.classList.add('locked');
     });
 
-    const dieRemaining = dice.filter(
+    // Determine how many dice are remaining
+    let dieRemaining = dice.filter(
       (die) => die.parentElement.id !== 'user-holding-container'
     );
 
-    dieRemaining.forEach((die) => {
-      const newValue = Math.floor(Math.random() * 6) + 1;
-      die.value = newValue;
-      die.style.backgroundImage = `url(images/die${newValue}.png)`;
-      die.style.display = 'block';
-      counts[newValue]++;
-    });
+    // If no dice remain, reroll all dice (reset)
+    if (dieRemaining.length === 0) {
+      dieRemaining = resetDiceForReroll();
+    } else {
+      // Clear previous counts before rolling again
+      counts[1] = 0;
+      counts[2] = 0;
+      counts[3] = 0;
+      counts[4] = 0;
+      counts[5] = 0;
+      counts[6] = 0;
+
+      dieRemaining.forEach((die) => {
+        const newValue = Math.floor(Math.random() * 6) + 1;
+        die.value = newValue;
+        die.style.backgroundImage = `url(images/die${newValue}.png)`;
+        die.style.display = 'block';
+        counts[newValue]++;
+      });
+    }
+
+    console.log(`Remaining die values below:`);
+    console.log(counts);
 
     checkForValidThrow(counts, 'reroll');
   });
@@ -190,21 +205,15 @@ window.addEventListener('DOMContentLoaded', () => {
     if (hasOne || hasFive || hasThreeOfAkind) {
       throwBtn.style.display = 'none';
       throwAgain.style.display = 'block';
-      // console.log('has play');
-      // console.log(counts);
     } else {
       if (source === 'initial-roll') {
         throwBtn.textContent = 'Sorry, you BUST';
         throwBtn.disabled = true;
-        // console.log('initial');
-        // console.log(counts);
       }
       if (source === 'reroll') {
         // LOGIC FOR REROLL BUST
         throwAgain.textContent = 'Sorry, you BUST';
         throwAgain.disabled = true;
-        // console.log('reroll');
-        // console.log(counts);
       }
     }
 
@@ -231,20 +240,17 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // FUNCTION FOR RESETTING DICE AFTER SCORING WITH
-  // ALL DIE
+  // // FUNCTION FOR RESETTING DICE AFTER SCORING WITH
+  // // ALL DIE
   function resetDiceForReroll() {
-    console.log(`Checking reset`, counts);
     dice.forEach((die) => {
       dieNumbers.appendChild(die);
-      die.classList.remove('locked');
-      die.classList.remove('chosen');
-      die.style.backgroundImage = '';
-      die.style.display = 'block';
+      die.classList.remove('locked', 'chosen');
       const newValue = Math.floor(Math.random() * 6) + 1;
       die.value = newValue;
       counts[newValue]++;
       die.style.backgroundImage = `url(images/die${newValue}.png)`;
+      die.style.display = 'block';
     });
 
     currentRollScore = 0;
@@ -252,8 +258,7 @@ window.addEventListener('DOMContentLoaded', () => {
     throwAgain.classList.remove('locked');
     throwBtn.style.display = 'none';
     throwAgain.style.display = 'block';
-
-    // checkForValidThrow(counts, 'reroll');
   }
+
   // endTurn.addEventListener('click', () => {});
 });
