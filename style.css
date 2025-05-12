@@ -1,3 +1,11 @@
+#throw-btn {
+  display: block;
+}
+
+#throw-again {
+  display: none;
+}
+
 .die-img {
   display: none;
 }
@@ -57,6 +65,10 @@
   align-items: center;
   margin: 0.5em;
   background-size: cover;
+}
+
+.locked {
+  pointer-events: none;
 }
 
 #user-holding-container {
