@@ -10,18 +10,25 @@
   display: none;
 }
 
-.die-numbers {
+.user-rolled-container,
+.comp-rolled-container {
   display: flex;
   flex-direction: row;
   height: 100px;
 }
 
-#die1,
-#die2,
-#die3,
-#die4,
-#die5,
-#die6 {
+#compDie1,
+#compDie2,
+#compDie3,
+#compDie4,
+#compDie5,
+#compDie6,
+#userDie1,
+#userDie2,
+#userDie3,
+#userDie4,
+#userDie5,
+#userDie6 {
   width: 50px;
   height: 50px;
   display: flex;
@@ -32,32 +39,50 @@
   display: none;
 }
 
-#die1:hover,
-#die2:hover,
-#die3:hover,
-#die4:hover,
-#die5:hover,
-#die6:hover {
+#compDie1:hover,
+#compDie2:hover,
+#compDie3:hover,
+#compDie4:hover,
+#compDie5:hover,
+#compDie6:hover,
+#userDie1:hover,
+#userDie2:hover,
+#userDie3:hover,
+#userDie4:hover,
+#userDie5:hover,
+#userDie6:hover {
   cursor: pointer;
   transform: translateY(-5px);
 }
 
-#die1.chosen,
-#die2.chosen,
-#die3.chosen,
-#die4.chosen,
-#die5.chosen,
-#die6.chosen {
+#compDie1.chosen,
+#compDie2.chosen,
+#compDie3.chosen,
+#compDie4.chosen,
+#compDie5.chosen,
+#compDie6.chosen,
+#userDie1.chosen,
+#userDie2.chosen,
+#userDie3.chosen,
+#userDie4.chosen,
+#userDie5.chosen,
+#userDie6.chosen {
   transform: translateY(-5px);
   box-shadow: 0px 0px 10px;
 }
 
-#die1.once-chose,
-#die2.once-chose,
-#die3.once-chose,
-#die4.once-chose,
-#die5.once-chose,
-#die6.once-chose {
+#compDie1.once-chose,
+#compDie2.once-chose,
+#compDie3.once-chose,
+#compDie4.once-chose,
+#compDie5.once-chose,
+#compDie6.once-chose,
+#userDie1.once-chose,
+#userDie2.once-chose,
+#userDie3.once-chose,
+#userDie4.once-chose,
+#userDie5.once-chose,
+#userDie6.once-chose {
   width: 50px;
   height: 50px;
   display: flex;
@@ -69,6 +94,10 @@
 
 .locked {
   pointer-events: none;
+}
+
+#comp-holding-container {
+  display: flex;
 }
 
 #user-holding-container {

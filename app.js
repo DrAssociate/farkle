@@ -3,25 +3,34 @@ window.addEventListener('DOMContentLoaded', () => {
   //////////////GLOBAL LOGIC//////////////
   ////////////////////////////////////////
 
+  const compScore = document.querySelector('#comp-score');
+  const userScore = document.querySelector('#user-score');
   const throwBtn = document.querySelector('#throw-btn');
   const throwAgain = document.querySelector('#throw-again');
   const endTurn = document.querySelector('#end-turn');
   const compHoldingContainer = document.querySelector(
     '#comp-holding-container'
   );
+  const compRolledContainer = document.querySelector('.comp-rolled-container');
+  const compDice = [
+    document.querySelector('#compDie2'),
+    document.querySelector('#compDie1'),
+    document.querySelector('#compDie3'),
+    document.querySelector('#compDie4'),
+    document.querySelector('#compDie5'),
+    document.querySelector('#compDie6'),
+  ];
   const userHoldingContainer = document.querySelector(
     '#user-holding-container'
   );
-  const compScore = document.querySelector('#comp-score');
-  const userScore = document.querySelector('#user-score');
-  const dieNumbers = document.querySelector('.die-numbers');
-  const dice = [
-    document.querySelector('#die1'),
-    document.querySelector('#die2'),
-    document.querySelector('#die3'),
-    document.querySelector('#die4'),
-    document.querySelector('#die5'),
-    document.querySelector('#die6'),
+  const userRolledContainer = document.querySelector('.user-rolled-container');
+  const userDice = [
+    document.querySelector('#userDie2'),
+    document.querySelector('#userDie1'),
+    document.querySelector('#userDie3'),
+    document.querySelector('#userDie4'),
+    document.querySelector('#userDie5'),
+    document.querySelector('#userDie6'),
   ];
 
   // SETTING CURRENT PLAYER AS USER TO INITIATE GAME
@@ -49,7 +58,7 @@ window.addEventListener('DOMContentLoaded', () => {
   ////////////////////////////////////////
 
   // SHOWS SELECTED DIE AND ADD SCORE
-  dice.forEach((die) => {
+  userDice.forEach((die) => {
     die.addEventListener('click', function () {
       // CHECKING IF DIE HAS BEEN COUNTED AND MOVED TO HOLDING CONTAINER
       if (die.classList.contains('locked')) return;
@@ -70,7 +79,9 @@ window.addEventListener('DOMContentLoaded', () => {
       };
 
       // CALCULATE USER SCORE
-      const chosenDice = dice.filter((die) => die.classList.contains('chosen'));
+      const chosenDice = userDice.filter((die) =>
+        die.classList.contains('chosen')
+      );
 
       chosenDice.forEach((die) => {
         countsWhileChoosing[die.value]++;
@@ -127,7 +138,7 @@ window.addEventListener('DOMContentLoaded', () => {
       if (source === 'initial-roll') {
         throwBtn.textContent = 'Sorry, you BUST';
         throwBtn.disabled = true;
-        dice.forEach((die) => {
+        userDice.forEach((die) => {
           die.classList.add('locked');
         });
         return;
@@ -136,7 +147,7 @@ window.addEventListener('DOMContentLoaded', () => {
         // LOGIC FOR REROLL BUST
         throwAgain.textContent = 'Sorry, you BUST';
         throwAgain.disabled = true;
-        dice.forEach((die) => {
+        userDice.forEach((die) => {
           die.classList.add('locked');
         });
         return;
@@ -145,7 +156,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // LOGIC FOR WHEN ALL THROWN DIE HAVE BEEN SCORED
     // AND DICE RESET IS POSSIBLE
-    const allDiceScored = dice.every(
+    const allDiceScored = userDice.every(
       (die) =>
         die.classList.contains('locked') ||
         die.parentElement.id.includes('userHoldingContainer')
@@ -168,13 +179,13 @@ window.addEventListener('DOMContentLoaded', () => {
   // // FUNCTION FOR RESETTING DICE AFTER SCORING WITH
   // // ALL DIE
   function resetDiceForReroll() {
-    dice.forEach((die) => {
-      dieNumbers.appendChild(die);
+    userDice.forEach((die) => {
+      userRolledContainer.appendChild(die);
       die.classList.remove('locked', 'chosen');
       const newValue = Math.floor(Math.random() * 6) + 1;
       die.value = newValue;
       counts[newValue]++;
-      die.style.backgroundImage = `url(images/die${newValue}.png)`;
+      die.style.backgroundImage = `url(images/userDie${newValue}.png)`;
       die.style.display = 'block';
     });
 
@@ -187,15 +198,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // FUNCTION FOR ENDING CURRENTPLAYER'S TURN
   endTurn.addEventListener('click', () => {
-    // counts[0] = 0;
-    // counts[1] = 0;
-    // counts[2] = 0;
-    // counts[3] = 0;
-    // counts[4] = 0;
-    // counts[5] = 0;
-    // console.log(counts);
-
-    dice.forEach((die) => {
+    userDice.forEach((die) => {
       die.classList.add('locked');
       // die.classList.remove('locked');
       die.classList.remove('chosen');
@@ -212,10 +215,18 @@ window.addEventListener('DOMContentLoaded', () => {
 
       if (die.parentElement === userHoldingContainer) {
         userHoldingContainer.removeChild(die);
-        dieNumbers.appendChild(die);
+        userRolledContainer.appendChild(die);
       }
       die.style.display = 'none';
     });
+
+    // MAKE SURE COMPUTER GETS FRESH COUNTS OBJECT
+    counts[1] = 0;
+    counts[2] = 0;
+    counts[3] = 0;
+    counts[4] = 0;
+    counts[5] = 0;
+    counts[6] = 0;
 
     setTimeout(() => {
       computerTurn();
@@ -232,11 +243,11 @@ window.addEventListener('DOMContentLoaded', () => {
     console.log('User is playing');
 
     // DISPLAYING THE ROLLED DIE ON SCREEN
-    dice.forEach((die) => {
+    userDice.forEach((die) => {
       let dieNumber = Math.floor(Math.random() * 6) + 1;
       die.value = dieNumber;
       die.style.display = 'block';
-      die.style.backgroundImage = `url(images/die${dieNumber}.png)`;
+      die.style.backgroundImage = `url(images/userDie${dieNumber}.png)`;
       counts[dieNumber]++;
     });
 
@@ -269,7 +280,7 @@ window.addEventListener('DOMContentLoaded', () => {
     throwAgain.classList.add('locked');
 
     // Move chosen dice to holding container and lock them
-    const chosenDice = dice.filter(
+    const chosenDice = userDice.filter(
       (die) =>
         die.classList.contains('chosen') &&
         die.parentElement.id !== 'user-holding-container'
@@ -285,7 +296,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     // Determine how many dice are remaining
-    let dieRemaining = dice.filter(
+    let dieRemaining = userDice.filter(
       (die) => die.parentElement.id !== 'user-holding-container'
     );
 
@@ -304,7 +315,7 @@ window.addEventListener('DOMContentLoaded', () => {
       dieRemaining.forEach((die) => {
         const newValue = Math.floor(Math.random() * 6) + 1;
         die.value = newValue;
-        die.style.backgroundImage = `url(images/die${newValue}.png)`;
+        die.style.backgroundImage = `url(images/userDie${newValue}.png)`;
         die.style.display = 'block';
         counts[newValue]++;
       });
@@ -323,44 +334,79 @@ window.addEventListener('DOMContentLoaded', () => {
     currentRollScore = 0;
 
     // KEEPING TRACK OF CURRENT COUNT WHILE CHOOSING DICE
-    const counts = {
-      1: 0,
-      2: 0,
-      3: 0,
-      4: 0,
-      5: 0,
-      6: 0,
-    };
+    // counts[1] = 0;
+    // counts[2] = 0;
+    // counts[3] = 0;
+    // counts[4] = 0;
+    // counts[5] = 0;
+    // counts[6] = 0;
 
-    dice.forEach((die) => {
+    compDice.forEach((die) => {
       let dieNumber = Math.floor(Math.random() * 6 + 1);
       die.value = dieNumber;
       die.style.display = 'block';
-      die.style.backgroundImage = `url(images/die${dieNumber}.png)`;
+      die.style.backgroundImage = `url(images/compDie${dieNumber}.png)`;
       counts[dieNumber]++;
     });
-
-    let diceToKeep = [];
 
     // FOR SCORING 1's 5's OR 3 OF A KIND
     for (let i = 1; i <= 6; i++) {
       if (counts[i] >= 3) {
         let multiplier = 1;
-        if (counts[i] === 4) multiplier === 2;
-        if (counts[i] === 5) multiplier === 3;
-        if (counts[i] === 6) multiplier === 4;
+        // SCORING FOR 4/5/6 OF A KIND
+        if (counts[i] === 4) multiplier = 2;
+        if (counts[i] === 5) multiplier = 3;
+        if (counts[i] === 6) multiplier = 4;
 
+        // SCORING FOR 3 OF A KIND
         if (i === 1) {
           currentRollScore += 1000 * multiplier;
         } else {
           currentRollScore += i * 100 * multiplier;
         }
 
+        // RESETTING DIE
         counts[i] = 0;
       }
     }
 
+    // SCORING FOR LESS THAN 3 OF A KIND 1s AND 5s
     currentRollScore += counts[1] * 100;
     currentRollScore += counts[5] * 50;
+
+    let diceToKeep = [];
+    console.log('computer chose die');
+
+    for (let i = 1; i <= 6; i++) {
+      if (counts[i] >= 3) {
+        let countToKeep = counts[i];
+        let keptCount = 0;
+        for (const die of dice) {
+          if (
+            die.value === i &&
+            keptCount < countToKeep &&
+            !diceToKeep.includes(die)
+          ) {
+            diceToKeep.push(die);
+            keptCount++;
+          }
+        }
+      }
+    }
+
+    for (const die of compDice) {
+      if ((die.value === 1 || die.value === 5) && !diceToKeep.includes(die)) {
+        diceToKeep.push(die);
+      }
+    }
+
+    diceToKeep.forEach((die) => {
+      compHoldingContainer.appendChild(die);
+      die.classList.add('locked');
+      die.style.display = 'block';
+    });
+
+    globalCompScore += currentRollScore;
+    compScore.textContent = globalCompScore;
   }
 });
