@@ -194,6 +194,8 @@ window.addEventListener('DOMContentLoaded', () => {
     throwAgain.classList.remove('locked');
     throwBtn.style.display = 'none';
     throwAgain.style.display = 'block';
+
+    // return userDice;
   }
 
   // FUNCTION FOR ENDING CURRENTPLAYER'S TURN
@@ -332,14 +334,14 @@ window.addEventListener('DOMContentLoaded', () => {
     console.log(`Computer's turn begins!`);
 
     currentRollScore = 0;
-
-    // KEEPING TRACK OF CURRENT COUNT WHILE CHOOSING DICE
-    // counts[1] = 0;
-    // counts[2] = 0;
-    // counts[3] = 0;
-    // counts[4] = 0;
-    // counts[5] = 0;
-    // counts[6] = 0;
+    let counts = {
+      1: 0,
+      2: 0,
+      3: 0,
+      4: 0,
+      5: 0,
+      6: 0,
+    };
 
     compDice.forEach((die) => {
       let dieNumber = Math.floor(Math.random() * 6 + 1);
@@ -349,26 +351,46 @@ window.addEventListener('DOMContentLoaded', () => {
       counts[dieNumber]++;
     });
 
-    // FOR SCORING 1's 5's OR 3 OF A KIND
+    let scoringDiceValues = [];
+
     for (let i = 1; i <= 6; i++) {
       if (counts[i] >= 3) {
         let multiplier = 1;
-        // SCORING FOR 4/5/6 OF A KIND
         if (counts[i] === 4) multiplier = 2;
         if (counts[i] === 5) multiplier = 3;
         if (counts[i] === 6) multiplier = 4;
 
-        // SCORING FOR 3 OF A KIND
         if (i === 1) {
           currentRollScore += 1000 * multiplier;
         } else {
           currentRollScore += i * 100 * multiplier;
         }
 
-        // RESETTING DIE
+        scoringDiceValues.push(...Array(counts[i]).fill(i)); // collect scoring dice
         counts[i] = 0;
       }
     }
+
+    // Now highlight scoring dice
+    let remainingToHighlight = [...scoringDiceValues];
+    compDice.forEach((die) => {
+      if (remainingToHighlight.includes(die.value)) {
+        die.classList.add('chosen');
+        remainingToHighlight.splice(remainingToHighlight.indexOf(die.value), 1); // remove one occurrence
+      }
+    });
+
+    // Wait and then remove highlight
+    setTimeout(() => {
+      compDice.forEach((die) => die.classList.remove('chosen'));
+
+      // For now, end turn here (you can expand later)
+      setTimeout(() => {
+        currentPlayer = 'user';
+        throwBtn.style.display = 'block';
+        endTurn.style.display = 'block';
+      }, 1000);
+    }, 1500); // 1.5 second delay to show dice
 
     // SCORING FOR LESS THAN 3 OF A KIND 1s AND 5s
     currentRollScore += counts[1] * 100;
@@ -381,7 +403,7 @@ window.addEventListener('DOMContentLoaded', () => {
       if (counts[i] >= 3) {
         let countToKeep = counts[i];
         let keptCount = 0;
-        for (const die of dice) {
+        for (const die of compDice) {
           if (
             die.value === i &&
             keptCount < countToKeep &&
@@ -400,13 +422,44 @@ window.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    diceToKeep.forEach((die) => {
-      compHoldingContainer.appendChild(die);
-      die.classList.add('locked');
-      die.style.display = 'block';
-    });
+    setTimeout(() => {
+      animateComputerSelection(diceToKeep, 0);
+    }, 1000);
 
-    globalCompScore += currentRollScore;
-    compScore.textContent = globalCompScore;
+    function animateComputerSelection(diceToKeep, index) {
+      // Base case: if index is equal to length, done selecting
+      if (index >= diceToKeep.length) {
+        setTimeout(() => {
+          finishComputerTurn(diceToKeep);
+        }, 2000); // Wait 1 second before finishing turn so user can see
+        return;
+      }
+
+      // Select the current die visually
+      const die = diceToKeep[index];
+      die.classList.add('chosen');
+
+      // Wait 600ms, then select next die
+      setTimeout(() => {
+        animateComputerSelection(diceToKeep, index + 1);
+      }, 600);
+    }
+
+    function finishComputerTurn(diceToKeep) {
+      diceToKeep.forEach((die) => {
+        die.classList.remove('chosen');
+        die.classList.add('locked');
+        compHoldingContainer.appendChild(die);
+      });
+
+      globalCompScore += currentRollScore;
+      compScore.textContent = globalCompScore;
+      console.log(`Computer ends turn with ${currentRollScore} points.`);
+
+      throwBtn.style.display = 'inline-block';
+      endTurn.style.display = 'inline-block';
+      throwBtn.disabled = false;
+      endTurn.disabled = false;
+    }
   }
 });
